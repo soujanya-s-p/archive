@@ -1,88 +1,87 @@
 import streamlit as st
 import pickle
 import requests
-import os
+from huggingface_hub import hf_hub_download
 
-
+# Function to fetch movie poster from TMDB API
 def fetch_poster(movie_id):
-     url = "https://api.themoviedb.org/3/movie/{}?api_key=c7ec19ffdd3279641fb606d19ceb9bb1&language=en-US".format(movie_id)
-     data=requests.get(url)
-     data=data.json()
-     poster_path = data['poster_path']
-     full_path = "https://image.tmdb.org/t/p/w500/"+poster_path
-     return full_path
+    api_key = "c7ec19ffdd3279641fb606d19ceb9bb1"  # Replace with your TMDB API key
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}&language=en-US"
+    
+    try:
+        data = requests.get(url).json()
+        if 'poster_path' in data and data['poster_path']:
+            return f"https://image.tmdb.org/t/p/w500/{data['poster_path']}"
+    except Exception as e:
+        st.error(f"Error fetching poster: {e}")
+    
+    return "https://via.placeholder.com/200"  # Placeholder image if no poster is available
 
+# Load movies dataset
 movies = pickle.load(open("movies_list.pkl", 'rb'))
-#similarity = pickle.load(open("similarity.pkl", 'rb'))
-import requests
 
-url = "https://huggingface.co/datasets/souvani2004/similarity/resolve/main/similarity.pkl"
-response = requests.get(url)
+# Download and load similarity.pkl from Hugging Face
+repo_id = "souvani2004/similarity"
+filename = "similarity.pkl"
 
-with open("similarity.pkl", "wb") as f:
-    f.write(response.content)
+file_path = hf_hub_download(repo_id=repo_id, filename=filename, local_dir=".")
+with open(file_path, "rb") as f:
+    similarity = pickle.load(f)
 
-print("Download complete!")
+# Extract movie titles
+movies_list = movies['title'].values
 
+# Streamlit App UI
+st.title("🎬 Movie Recommender System")
 
+# Movie selection dropdown
+selectvalue = st.selectbox("🎥 Select a Movie:", movies_list)
 
-movies_list=movies['title'].values
-
-st.header("Movie Recommender System")
-
-import streamlit.components.v1 as components
-
-import streamlit.components.v1 as components
-imageCarouselComponent = components.declare_component("image-carousel-component", path="frontend/public")
-
-imageUrls = [
-    fetch_poster(1632),
-    fetch_poster(299536),
-    fetch_poster(17455),
-    fetch_poster(2830),
-    fetch_poster(429422),
-    fetch_poster(9722),
-    fetch_poster(13972),
-    fetch_poster(240),
-    fetch_poster(155),
-    fetch_poster(598),
-    fetch_poster(914),
-    fetch_poster(255709),
-    fetch_poster(572154)
-   
-    ]
-
-
-selectvalue=st.selectbox("Select movie from dropdown", movies_list)
-
+# Recommendation function
 def recommend(movie):
-    index=movies[movies['title']==movie].index[0]
-    distance = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda vector:vector[1])
-    recommend_movie=[]
-    recommend_poster=[]
-    for i in distance[1:6]:
-        movies_id=movies.iloc[i[0]].id
+    try:
+        index = movies.index[movies['title'] == movie][0]  # Get movie index
+    except IndexError:
+        st.error("⚠️ Movie not found. Please select another one.")
+        return [], []
+    
+    distance = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda vector: vector[1])
+    
+    recommend_movie = []
+    recommend_poster = []
+    
+    for i in distance[1:6]:  # Get top 5 similar movies
+        movie_id = movies.iloc[i[0]].id
         recommend_movie.append(movies.iloc[i[0]].title)
-        recommend_poster.append(fetch_poster(movies_id))
+        recommend_poster.append(fetch_poster(movie_id))
+    
     return recommend_movie, recommend_poster
 
+# Display recommendations
+if st.button("🔍 Show Recommendations"):
+    movie_names, movie_posters = recommend(selectvalue)
+    
+    if movie_names:
+        col1, col2, col3, col4, col5 = st.columns(5)
+        
+        with col1:
+            st.text(movie_names[0])
+            st.image(movie_posters[0])
+        
+        with col2:
+            st.text(movie_names[1])
+            st.image(movie_posters[1])
+        
+        with col3:
+            st.text(movie_names[2])
+            st.image(movie_posters[2])
+        
+        with col4:
+            st.text(movie_names[3])
+            st.image(movie_posters[3])
+        
+        with col5:
+            st.text(movie_names[4])
+            st.image(movie_posters[4])
 
 
-if st.button("Show Recommend"):
-    movie_name, movie_poster = recommend(selectvalue)
-    col1,col2,col3,col4,col5=st.columns(5)
-    with col1:
-        st.text(movie_name[0])
-        st.image(movie_poster[0])
-    with col2:
-        st.text(movie_name[1])
-        st.image(movie_poster[1])
-    with col3:
-        st.text(movie_name[2])
-        st.image(movie_poster[2])
-    with col4:
-        st.text(movie_name[3])
-        st.image(movie_poster[3])
-    with col5:
-        st.text(movie_name[4])
-        st.image(movie_poster[4])
