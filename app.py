@@ -14,7 +14,6 @@ def fetch_poster(movie_id):
 
 movies = pickle.load(open("movies_list.pkl", 'rb'))
 #similarity = pickle.load(open("similarity.pkl", 'rb'))
-import requests
 
 file_id = "1qk2BkDcK0gL5PjWR04I4K2bqztAZAHi6"
 url = f"https://drive.google.com/uc?export=download&id={file_id}"
@@ -22,13 +21,25 @@ output = "similarity.pkl"
 
 # Download the file
 response = requests.get(url, allow_redirects=True)
+
+# Save the response content
 with open(output, "wb") as f:
     f.write(response.content)
 
-# Load the pickle file
+# Check file size before unpickling
+import os
+print("Downloaded file size:", os.path.getsize(output), "bytes")
+
+# Try to unpickle safely
 import pickle
-similarity = pickle.load(open(output, "rb"))
-      
+
+try:
+    with open(output, "rb") as f:
+        similarity = pickle.load(f)
+    print("Pickle file loaded successfully!")
+except Exception as e:
+    print("Error while loading pickle:", e)
+
 
 movies_list=movies['title'].values
 
