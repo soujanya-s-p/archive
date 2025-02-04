@@ -30,15 +30,20 @@ with open(output, "wb") as f:
 import os
 print("Downloaded file size:", os.path.getsize(output), "bytes")
 
-# Try to unpickle safely
-import pickle
 
 try:
     with open(output, "rb") as f:
         similarity = pickle.load(f)
-    print("Pickle file loaded successfully!")
+    print("✅ similarity.pkl loaded successfully!")
+except FileNotFoundError:
+    print("❌ ERROR: similarity.pkl not found!")
+    similarity = None
+except pickle.UnpicklingError:
+    print("❌ ERROR: similarity.pkl is corrupted!")
+    similarity = None
 except Exception as e:
-    print("Error while loading pickle:", e)
+    print("❌ ERROR while loading similarity.pkl:", e)
+    similarity = None
 
 
 movies_list=movies['title'].values
