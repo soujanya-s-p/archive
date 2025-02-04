@@ -14,15 +14,16 @@ def fetch_poster(movie_id):
 
 movies = pickle.load(open("movies_list.pkl", 'rb'))
 #similarity = pickle.load(open("similarity.pkl", 'rb'))
-from huggingface_hub import hf_hub_download
+import requests
 
+url = "https://huggingface.co/datasets/souvani2004/similarity/resolve/main/similarity.pkl"
+response = requests.get(url)
 
-# Download the file from Hugging Face
-file_path = hf_hub_download(repo_id="souvani2004/similarity", filename="similarity.pkl", local_dir=".")
+with open("similarity.pkl", "wb") as f:
+    f.write(response.content)
 
-# Load the pickle file
-with open(file_path, "rb") as file:
-    similarity = pickle.load(file)
+print("Download complete!")
+
 
 
 movies_list=movies['title'].values
