@@ -1,6 +1,11 @@
 import streamlit as st
 import pickle
 import requests
+import gdown
+import os
+
+file_id = "1qk2BkDcK0gL5PjWR04I4K2bqztAZAHi6"
+output = "similarity.pkl"
 
 def fetch_poster(movie_id):
      url = "https://api.themoviedb.org/3/movie/{}?api_key=c7ec19ffdd3279641fb606d19ceb9bb1&language=en-US".format(movie_id)
@@ -12,8 +17,11 @@ def fetch_poster(movie_id):
 
 movies = pickle.load(open("movies_list.pkl", 'rb'))
 #similarity = pickle.load(open("similarity.pkl", 'rb'))
-with open("similarity.pkl", 'rb') as file:
-    similarity = pickle.load(file)
+if not os.path.exists(output):
+    gdown.download(f"https://drive.google.com/uc?id={1qk2BkDcK0gL5PjWR04I4K2bqztAZAHi6}", output, quiet=False)
+
+# Load the pickle file
+similarity = pickle.load(open(output, "rb"))           
 
 movies_list=movies['title'].values
 
