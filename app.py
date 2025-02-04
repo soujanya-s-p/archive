@@ -18,7 +18,7 @@ from huggingface_hub import hf_hub_download
 
 
 # Download the file from Hugging Face
-file_path = hf_hub_download(repo_id="your-username/your-repo", filename="similarity.pkl", local_dir=".")
+file_path = hf_hub_download(repo_id="souvani2004/similarity", filename="similarity.pkl", local_dir=".")
 
 # Load the pickle file
 with open(file_path, "rb") as file:
