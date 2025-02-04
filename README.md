@@ -11,7 +11,7 @@ A content-based movie recommendation system built using **Streamlit, TMDB API, a
 ✅ Hosted on **Streamlit Cloud**  
 
 ## 🚀 Live Demo  
-[[🔗 Click here to try the app]([your-streamlit-link](https://archive-vzohe3vgzsfshfcif6brxd.streamlit.app/))  ]
+your-streamlit-link](https://archive-vzohe3vgzsfshfcif6brxd.streamlit.app/
 
 ## 🛠 Installation  
 1. Clone the repository  
