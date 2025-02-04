@@ -14,36 +14,15 @@ def fetch_poster(movie_id):
 
 movies = pickle.load(open("movies_list.pkl", 'rb'))
 #similarity = pickle.load(open("similarity.pkl", 'rb'))
-
-file_id = "1qk2BkDcK0gL5PjWR04I4K2bqztAZAHi6"
-url = f"https://drive.google.com/uc?export=download&id={file_id}"
-output = "similarity.pkl"
-
-# Download the file
-response = requests.get(url, allow_redirects=True)
-
-# Save the response content
-with open(output, "wb") as f:
-    f.write(response.content)
-
-# Check file size before unpickling
-import os
-print("Downloaded file size:", os.path.getsize(output), "bytes")
+from huggingface_hub import hf_hub_download
 
 
-try:
-    with open(output, "rb") as f:
-        similarity = pickle.load(f)
-    print("✅ similarity.pkl loaded successfully!")
-except FileNotFoundError:
-    print("❌ ERROR: similarity.pkl not found!")
-    similarity = None
-except pickle.UnpicklingError:
-    print("❌ ERROR: similarity.pkl is corrupted!")
-    similarity = None
-except Exception as e:
-    print("❌ ERROR while loading similarity.pkl:", e)
-    similarity = None
+# Download the file from Hugging Face
+file_path = hf_hub_download(repo_id="your-username/your-repo", filename="similarity.pkl", local_dir=".")
+
+# Load the pickle file
+with open(file_path, "rb") as file:
+    similarity = pickle.load(file)
 
 
 movies_list=movies['title'].values
