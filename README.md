@@ -11,10 +11,15 @@ A content-based movie recommendation system built using **Streamlit, TMDB API, a
 ✅ Hosted on **Streamlit Cloud**  
 
 ## 🚀 Live Demo  
-your-streamlit-link](https://archive-vzohe3vgzsfshfcif6brxd.streamlit.app/
+https://archive-vzohe3vgzsfshfcif6brxd.streamlit.app/
 
 ## 🛠 Installation  
 1. Clone the repository  
    ```bash
    git clone https://github.com/your-username/movie-recommender.git
    cd movie-recommender
+
+
+   📌 Screenshots
+
+![image](https://github.com/user-attachments/assets/b8f9ef98-8168-4fae-b736-841bedb69c27)
