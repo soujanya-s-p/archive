@@ -24,7 +24,7 @@ movies = pickle.load(open("movies_list.pkl", 'rb'))
 repo_id = "souvani2004/similarity"
 filename = "similarity.pkl"
 
-file_path = hf_hub_download(repo_id=repo_id, filename=filename, local_dir=".")
+file_path = hf_hub_download(repo_id=souvani2004/similarity, filename=filename, local_dir=".")
 with open(file_path, "rb") as f:
     similarity = pickle.load(f)
 
